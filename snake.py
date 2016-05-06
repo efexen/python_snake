@@ -1,35 +1,6 @@
 import pygame
 from pygame.locals import *
-
-class Level:
-
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-
-    def update(self):
-        pass
-
-    def draw(self, screen):
-        screen.fill((0, 0, 0))
-
-
-class Snake:
-
-    def __init__(self, level):
-        self.x = level.width // 2
-        self.y = level.height // 2
-
-        self.velocity_x = 1
-        self.velocity_y = 0
-
-    def update(self):
-        self.x += self.velocity_x
-        self.y += self.velocity_y
-
-    def draw(self, screen):
-        screen.set_at((self.x, self.y), (0, 255, 0))
-
+from game_objects import *
 
 class SnakeGame:
 
@@ -50,16 +21,16 @@ class SnakeGame:
 
     def keydown(self, event):
         if event.key == K_LEFT:
-            self.snake.velocity_x = -1
+            self.snake.velocity_x = -self.snake.speed
             self.snake.velocity_y = 0
         elif event.key == K_RIGHT:
-            self.snake.velocity_x = 1
+            self.snake.velocity_x = self.snake.speed
             self.snake.velocity_y = 0
         elif event.key == K_UP:
-            self.snake.velocity_y = -1
+            self.snake.velocity_y = -self.snake.speed
             self.snake.velocity_x = 0
         elif event.key == K_DOWN:
-            self.snake.velocity_y = 1
+            self.snake.velocity_y = self.snake.speed
             self.snake.velocity_x = 0
 
     def handle_event(self, event):
@@ -88,7 +59,7 @@ class SnakeGame:
             self.update()
             self.draw()
 
-            self.clock.tick(120)
+            self.clock.tick(60)
 
 level = Level(640, 480)
 game = SnakeGame(level)
