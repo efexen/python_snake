@@ -9,12 +9,12 @@ class SnakeGame:
 
         self.level = level
         self.snake = Snake(level)
-
-        self.game_objects = [self.level, self.snake]
+        self.apple = Apple(level)
 
         self.screen = pygame.display.set_mode((level.width, level.height))
         self.running = True
         self.clock = pygame.time.Clock()
+        self.score = 0
 
     def quit(self, event):
         self.running = False
@@ -32,6 +32,8 @@ class SnakeGame:
         elif event.key == K_DOWN:
             self.snake.velocity_y = self.snake.speed
             self.snake.velocity_x = 0
+        elif event.key == K_ESCAPE:
+            self.quit(event)
 
     def handle_event(self, event):
         {
@@ -44,18 +46,44 @@ class SnakeGame:
             self.handle_event(event)
 
     def update(self):
-        for game_object in self.game_objects:
-            game_object.update()
+        self.snake.update()
+
+    def draw_score(self):
+        font = pygame.font.SysFont("comicsans", 28)
+        text = font.render(str(self.score), True, (128, 128, 128))
+        self.screen.blit(text, (0, 0))
 
     def draw(self):
-        for game_object in self.game_objects:
-            game_object.draw(self.screen)
+        self.level.draw(self.screen)
+        self.snake.draw(self.screen)
+        self.apple.draw(self.screen)
+        self.draw_score()
 
         pygame.display.flip()
+
+    def eat_apple(self):
+        self.apple = Apple(self.level)
+        self.snake.grow()
+
+        self.score += 100
+
+    def check_collisions(self):
+
+        if (((self.snake.x - 5 >= self.apple.x - 5
+        and self.snake.x - 5 <= self.apple.x + 5)
+        or (self.snake.x + 5 >= self.apple.x - 5
+        and self.snake.x + 5 <= self.apple.x + 5))
+
+        and ((self.snake.y - 5 >= self.apple.y - 5
+        and self.snake.y - 5 <= self.apple.y + 5)
+        or (self.snake.y + 5 >= self.apple.y - 5
+        and self.snake.y + 5 <= self.apple.y + 5))):
+            self.eat_apple()
 
     def play(self):
         while(self.running):
             self.check_events()
+            self.check_collisions()
             self.update()
             self.draw()
 
