@@ -2,7 +2,31 @@ import pygame
 import colorsys
 from random import randint
 
+class CollisionChecker:
+
+    def collided(self, object1, object2, box_compensation = 0):
+        size1 = object1.size - box_compensation
+        size2 = object2.size - box_compensation
+
+        return (((object1.x - size1 >= object2.x - size2
+        and object1.x - size1 <= object2.x + size2)
+        or (object1.x + size1 >= object2.x - size2
+        and object1.x + size1 <= object2.x + size2))
+
+        and ((object1.y - size1 >= object2.y - size2
+        and object1.y - size1 <= object2.y + size2)
+        or (object1.y + size1 >= object2.y - size2
+        and object1.y + size1 <= object2.y + size2)))
+
+    def out_of_bounds(self, game_object, level):
+        return ((game_object.x - game_object.size < 0) or
+        (game_object.x + game_object.size > level.width) or
+        (game_object.y - game_object.size < 0) or
+        (game_object.y + game_object.size > level.height))
+
 class Apple:
+
+    size = 10
 
     def __init__(self, level):
         self.x = randint(20, level.width - 20)
@@ -14,7 +38,7 @@ class Apple:
         pass
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (0, 255, 0), (self.x, self.y), 10, 0)
+        pygame.draw.circle(screen, (0, 255, 0), (self.x, self.y), self.size, 0)
 
 
 class Level:
@@ -23,15 +47,13 @@ class Level:
         self.width = width
         self.height = height
 
-    def update(self):
-        pass
-
     def draw(self, screen):
         screen.fill((0, 0, 0))
 
 class Snake:
 
     speed = 2
+    size = 10
 
     def __init__(self, level):
         self.segments = []
@@ -63,4 +85,4 @@ class Snake:
 
     def draw(self, screen):
         for x, y, color in self.segments:
-            pygame.draw.circle(screen, self.color_for(color), (x, y), 10, 0)
+            pygame.draw.circle(screen, self.color_for(color), (x, y), self.size, 0)
